@@ -33,6 +33,13 @@ def main():
     if "\n" in LINE or LINE != LINE.strip():
         sys.exit("line must be a single line with no surrounding space")
     data = (LINE + "\n").encode("utf-8")
+    # Validate the exact bytes the judge reads, not just the in-memory line:
+    # the gate counts the file's characters, trailing newline included.
+    judged = data.decode("utf-8")
+    if not (1 <= len(judged) <= 200):
+        sys.exit(f"judged file is {len(judged)} characters, gate needs 1-200")
+    if judged.rstrip("\n") != LINE or judged.endswith("\n\n"):
+        sys.exit("judged file must be the line plus exactly one newline")
     os.makedirs(out_dir, exist_ok=True)
     with open(path, "wb") as f:
         f.write(data)
